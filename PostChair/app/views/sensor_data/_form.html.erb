@@ -1,0 +1,33 @@
+<%= form_for(@sensor_datum) do |f| %>
+  <% if @sensor_datum.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@sensor_datum.errors.count, "error") %> prohibited this sensor_datum from being saved:</h2>
+
+      <ul>
+      <% @sensor_datum.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :user_id_id %><br>
+    <%= f.text_field :user_id_id %>
+  </div>
+  <div class="field">
+    <%= f.label :position %><br>
+    <%= f.text_field :position %>
+  </div>
+  <div class="field">
+    <%= f.label :time %><br>
+    <%= f.datetime_select :time %>
+  </div>
+  <div class="field">
+    <%= f.label :measurement %><br>
+    <%= f.text_field :measurement %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

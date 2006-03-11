@@ -1,0 +1,19 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>Manager:</strong>
+  <%= @manager_association.manager_id %>
+</p>
+
+<p>
+  <strong>Employee:</strong>
+  <%= @manager_association.employee_id %>
+</p>
+
+<p>
+  <strong>Active:</strong>
+  <%= @manager_association.active %>
+</p>
+
+<%= link_to 'Edit', edit_manager_association_path(@manager_association) %> |
+<%= link_to 'Back', manager_associations_path %>

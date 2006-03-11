@@ -15,3 +15,9 @@
 /log/*
 !/log/.keep
 /tmp
+#*
+*~
+*.sql
+*.log
+secrets.yml
+database.yml

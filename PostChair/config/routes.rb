@@ -1,4 +1,7 @@
 Rails.application.routes.draw do
+  resources :manager_associations
+  resources :sensor_data
+  devise_for :users
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
 
