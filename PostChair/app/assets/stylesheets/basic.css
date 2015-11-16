@@ -1,0 +1,9 @@
+body{
+	background: url('/assets/postchair2.jpg') no-repeat;
+	background-size: 100% auto;
+	text-align: center;
+}
+
+form {
+  text-align: center;
+}
