@@ -1,0 +1,33 @@
+<%= form_for(@manager_association) do |f| %>
+  <% if @manager_association.errors.any? %>
+    <div id="error_explanation">
+      <h2><%= pluralize(@manager_association.errors.count, "error") %> prohibited this manager_association from being saved:</h2>
+
+      <ul>
+      <% @manager_association.errors.full_messages.each do |message| %>
+        <li><%= message %></li>
+      <% end %>
+      </ul>
+    </div>
+  <% end %>
+
+  <div class="field">
+    <%= f.label :manager_id %><br>
+    <%= f.number_field :manager_id %>
+  </div>
+  <div class="field">
+    <%= f.label :employee_id %><br>
+    <%= f.number_field :employee_id %>
+  </div>
+  <div class="field">
+    <%= f.label :active %><br>
+    <%= f.text_field :active %>
+  </div>
+  <div class="field">
+    <%= f.label :boolean %><br>
+    <%= f.text_field :boolean %>
+  </div>
+  <div class="actions">
+    <%= f.submit %>
+  </div>
+<% end %>

@@ -1,0 +1,24 @@
+<p id="notice"><%= notice %></p>
+
+<p>
+  <strong>User:</strong>
+  <%= @input_stream.user_id %>
+</p>
+
+<p>
+  <strong>Position:</strong>
+  <%= @input_stream.position %>
+</p>
+
+<p>
+  <strong>Input time:</strong>
+  <%= @input_stream.input_time %>
+</p>
+
+<p>
+  <strong>Measurement:</strong>
+  <%= @input_stream.measurement %>
+</p>
+
+<%= link_to 'Edit', edit_input_stream_path(@input_stream) %> |
+<%= link_to 'Back', input_streams_path %>
