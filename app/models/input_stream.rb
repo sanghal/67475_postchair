@@ -1,6 +1,6 @@
 class InputStream < ActiveRecord::Base
   #Associations
-  belongs_to :user_id
+  belongs_to :user
 
   #Validations
   validates :user_id, presence: true, numericality: { only_integer: true }
@@ -17,7 +17,7 @@ class InputStream < ActiveRecord::Base
   scope :recent, -> { where("time > ? and time < ?", 1.day.ago, Time.now) }
   
   def self.back_positions
-    [[[1,0],[2,0],[3,1],[3,1],"Swayback"],[[1,0],[2,0],[3,1],[3,1],"Swayback"],[[1,0],[2,0],[3,1],[3,1],"Swayback"],[[1,0],[2,0],[3,1],[3,1],"Swayback"],
+    [[1,0],[2,0],[3,1],[3,1],"Swayback"],[[1,0],[2,0],[3,1],[3,1],"Swayback"],[[1,0],[2,0],[3,1],[3,1],"Swayback"],[[1,0],[2,0],[3,1],[3,1],"Swayback"]
   end
 
   def self.find_last_posture_sensors(user)

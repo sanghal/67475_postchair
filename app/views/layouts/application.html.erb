@@ -7,9 +7,25 @@
   <%= csrf_meta_tags %>
 </head>
 
+
 <nav class="blue lighten-1">
   <div class="nav-wrapper container">
-    <a href="home.html">Home</a>
+    <a class="brand-logo">Postchair</a>
+    <ul id="nav-mobile" class="right">
+
+        <% if logged_in? %>
+          <li><a href="dashboard/index"> Dashboard </a></li>
+          <li><a href="history/index"> History </a></li>
+          <li><a href="home.html"> Employee Dashboard </a></li>
+         <% end %>
+	  	  <!-- <div id="login"> -->
+          <!-- content once logged in goes here -->
+          <% if logged_in? %>
+            <li><%= link_to 'Logout', logout_path %></li>
+          <% else %>
+            <li><%= link_to 'Login', login_path %></li>
+         <% end %>
+        </ul>
 
     <!-- navigation options go here -->
 

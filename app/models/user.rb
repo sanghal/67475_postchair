@@ -1,4 +1,9 @@
 class User < ActiveRecord::Base
+
+	has_many :manager_associations
+	has_many :input_streams
+	
+
 	has_secure_password
 
 	validates :email, presence: true, uniqueness: {case_sensitive: false}
