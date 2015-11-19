@@ -4,7 +4,7 @@ class InputStreamsController < ApplicationController
   # GET /input_streams
   # GET /input_streams.json
   def index
-    @input_streams = InputStream.all
+    @input_streams = InputStream.by_time
   end
 
   # GET /input_streams/1
