@@ -17,8 +17,7 @@ class InputStream < ActiveRecord::Base
   scope :recent, -> { where("input_time > ? and input_time < ?", 1.day.ago, Time.now) }
   # Used in determining posture for small arrays
   scope :by_position, -> { order("position ASC") }
-  
-<<<<<<< HEAD
+
   BACK_POSITIONS = {
 	[[1,2],[2,2],[3,0],[4,0]] => 'SSH', # Slouch with Shoulder Hunch
 	[[1,0],[2,0],[3,1],[4,2]] => 'SB',  # Swayback
