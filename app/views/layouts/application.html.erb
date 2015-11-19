@@ -10,12 +10,16 @@
 
 <nav class="blue lighten-1">
   <div class="nav-wrapper container">
-    <a class="brand-logo">Postchair</a>
+    <% if logged_in? %>
+     <%= link_to 'Postchair', dashboard_path, class: "brand-logo"%>
+    <% else %>
+      <%= link_to 'Postchair', home_path, class: "brand-logo"%>
+    <% end %>
     <ul id="nav-mobile" class="right">
 
         <% if logged_in? %>
-          <li><a href="dashboard/index"> Dashboard </a></li>
-          <li><a href="history/index"> History </a></li>
+          <li><%= link_to 'Dashboard', dashboard_path %></li>
+         <li><%= link_to 'History', history_path %></li>
           <li><a href="home.html"> Employee Dashboard </a></li>
          <% end %>
 	  	  <!-- <div id="login"> -->

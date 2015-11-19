@@ -1,3 +1,10 @@
 nav ul {
 	margin: 15px !important;
 }
+
+body.sessions.new{
+	background: url('/assets/postchair2.jpg') no-repeat;
+	background-size: 100% auto;
+
+
+}
