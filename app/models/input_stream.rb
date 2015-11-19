@@ -18,6 +18,7 @@ class InputStream < ActiveRecord::Base
   # Used in determining posture for small arrays
   scope :by_position, -> { order("position ASC") }
   
+<<<<<<< HEAD
   BACK_POSITIONS = {
 	[[1,2],[2,2],[3,0],[4,0]] => 'SSH', # Slouch with Shoulder Hunch
 	[[1,0],[2,0],[3,1],[4,2]] => 'SB',  # Swayback
