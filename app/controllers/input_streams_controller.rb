@@ -21,6 +21,20 @@ class InputStreamsController < ApplicationController
   def edit
   end
 
+  # GET /inputstreamround/:m1/:m2/:m3/:m4 allows to process arduino requests
+  def insertRound
+    @input_stream1 = InputStream.new(:measurement=>params["m1"], :position=>1, :user_id=>1, :input_time=> DateTime.now.to_date)
+    @input_stream2 = InputStream.new(:measurement=>params["m2"], :position=>2, :user_id=>1, :input_time=> DateTime.now.to_date)
+    @input_stream3 = InputStream.new(:measurement=>params["m3"], :position=>3, :user_id=>1, :input_time=> DateTime.now.to_date)
+    @input_stream4 = InputStream.new(:measurement=>params["m4"], :position=>4, :user_id=>1, :input_time=> DateTime.now.to_date)
+    @input_stream1.save
+    @input_stream2.save
+    @input_stream3.save
+    @input_stream4.save
+    @input_streams = InputStream.by_time
+    render "input_streams/index"
+  end
+
   # POST /input_streams
   # POST /input_streams.json
   def create

@@ -13,6 +13,8 @@ Rails.application.routes.draw do
   get 'logout' => 'sessions#destroy', :as => :logout
 
   root to: 'sessions#new'
+
+  get '/inputstreamround/:m1/:m2/:m3/:m4', to: 'input_streams#insertRound'
   
   # The priority is based upon order of creation: first created -> highest priority.
   # See how all your routes lay out with "rake routes".
