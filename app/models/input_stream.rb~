@@ -67,7 +67,7 @@ class InputStream < ActiveRecord::Base
     recent_sensors = InputStream.for_user(user).recent.by_time
   end
 
-  def self.sitting_time(user)
+  def self.sitting_time(sensors)
     sitting_down = Datetime.now
     sensors.each do |s|
       if 
