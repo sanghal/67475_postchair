@@ -4,7 +4,15 @@ class HistoryController < ApplicationController
   # GET /input_streams
   # GET /input_streams.json
   def index
-    @input_streams = InputStream.by_time_fake.by_position.in_groups_of(4, false) {|group| p group}
+    @streams = InputStream.last_month
+    @input_streams = @streams.group_by { |t| t.set_id}
+    @postures = InputStream.determine_postures(@input_streams.values)
+    @result = Hash.new(0)
+    @postures.each { |prod, value| @result[value] += 1 } 
+    @good_postures = @postures.select {|key,value| value == "GP"}
+    @good_result = Hash.new(0)
+    @good_postures.each { |prod, value| @good_result[prod] += 1 } 
+    @bad_postures = @postures.each.select { |m| m[0] != "GP" }
     # @postures = InputStream.determine_posture(@input_streams.each)
   end
 

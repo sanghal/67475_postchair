@@ -1,2 +1,9 @@
+<div class="container">
+<h3 style = "text-align: center"> History of your Postures </h3>
+   <div class="row">
+      <div class="col s6"><%= pie_chart @result %></div>
+      <div class="col s6"><%= line_chart [{name: "Good Posture", data: @good_result}] %></div>
+    </div>
+</div>         
 
-<%= InputStream.by_time_fake.by_position%>
+

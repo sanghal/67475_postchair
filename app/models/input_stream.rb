@@ -11,6 +11,7 @@ class InputStream < ActiveRecord::Base
   validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   #Scopes
+  scope :last_month, -> { where("created_at > ? and created_at < ?", 30.days.ago, Time.now) }
   scope :by_time, -> { order("created_at DESC") }
   scope :by_set, -> { group("set_id") } 
   scope :by_time_fake, -> { order("input_time DESC") }
@@ -72,9 +73,17 @@ class InputStream < ActiveRecord::Base
   end
 
    def self.determine_postures(sensor_array)
-    postures = Array.new 
+    postures = Hash.new 
     sensor_array.each do|s|
-      postures.push(InputStream.determine_posture(s))
+      postures[s[0].created_at] = InputStream.determine_posture(s)
+    end
+    return postures
+  end
+
+  def self.determine_postures_time(sensor_array)
+    postures = Hash.new(Array.new()) 
+    sensor_array.each do|s|
+      postures[InputStream.determine_posture(s)].push(s[0].created_at)
     end
     return postures
   end

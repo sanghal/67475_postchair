@@ -14,9 +14,10 @@
   </thead>
 
   <tbody>
-    <% @postures.each do |posture| %>
+    <% @good_result.each do |key,value| %>
     <tr>
-        <td><%= posture %></td>
+        <td><%= key %></td>
+        <td><%= value %></td>
     </tr>
     <% end %>
     <% @input_streams.each do |set,input| %>
