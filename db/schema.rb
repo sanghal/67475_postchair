@@ -15,6 +15,7 @@ ActiveRecord::Schema.define(version: 20151118215013) do
 
   create_table "input_streams", force: :cascade do |t|
     t.integer  "user_id"
+    t.integer  "set_id"
     t.integer  "position"
     t.date     "input_time"
     t.integer  "measurement"

@@ -12,6 +12,8 @@ class InputStream < ActiveRecord::Base
 
   #Scopes
   scope :by_time, -> { order("created_at DESC") }
+  scope :by_set, -> { group("set_id") } 
+  scope :by_time_fake, -> { order("input_time DESC") }
   scope :for_user, lambda { |user_id| where("user_id = ?", user_id) }
   #Value for recent is arbitrary, I set it to the past day
   scope :recent, -> { where("input_time > ? and input_time < ?", 1.day.ago, Time.now) }
@@ -67,6 +69,14 @@ class InputStream < ActiveRecord::Base
 
   def self.recent_report(user)
     recent_sensors = InputStream.for_user(user).recent.by_time
+  end
+
+   def self.determine_postures(sensor_array)
+    postures = Array.new 
+    sensor_array.each do|s|
+      postures.push(InputStream.determine_posture(s))
+    end
+    return postures
   end
 
 

@@ -4,8 +4,11 @@ class InputStreamsController < ApplicationController
   # GET /input_streams
   # GET /input_streams.json
   def index
-    @input_streams = InputStream.by_time.limit(4)
-    @posture = InputStream.determine_posture(@input_streams)
+    @streams = InputStream.all
+    @input_streams = @streams.group_by { |t| t.set_id}
+    @postures = InputStream.determine_postures(@input_streams.values)
+   #@postures = InputStream.determine_posture(@input_streams.each)
+
   end
 
   # GET /input_streams/1
