@@ -4,8 +4,17 @@ class InputStreamsController < ApplicationController
   # GET /input_streams
   # GET /input_streams.json
   def index
-    @input_streams = InputStream.by_time.limit(4)
-    @posture = InputStream.determine_posture(@input_streams)
+    @streams = InputStream.last_month
+    @input_streams = @streams.group_by { |t| t.set_id}
+    @postures = InputStream.determine_postures(@input_streams.values)
+    @result = Hash.new(0)
+    @postures.each { |prod, value| @result[value] += 1 } 
+    @good_postures = @postures.select {|key,value| value == "GP"}
+    @good_result = Hash.new(0)
+    @good_postures.each { |prod, value| @good_result[prod.strftime("%d") ] += 1 } 
+    @bad_postures = @postures.each.select { |m| m[0] != "GP" }
+   #@postures = InputStream.determine_posture(@input_streams.each)
+
   end
 
   # GET /input_streams/1

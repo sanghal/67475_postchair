@@ -11,7 +11,10 @@ class InputStream < ActiveRecord::Base
   validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   #Scopes
+  scope :last_month, -> { where("created_at > ? and created_at < ?", 30.days.ago, Time.now) }
   scope :by_time, -> { order("created_at DESC") }
+  scope :by_set, -> { group("set_id") } 
+  scope :by_time_fake, -> { order("input_time DESC") }
   scope :for_user, lambda { |user_id| where("user_id = ?", user_id) }
   #Value for recent is arbitrary, I set it to the past day
   scope :recent, -> { where("input_time > ? and input_time < ?", 1.day.ago, Time.now) }
@@ -69,12 +72,24 @@ class InputStream < ActiveRecord::Base
     recent_sensors = InputStream.for_user(user).recent.by_time
   end
 
-  def self.sitting_time(user)
-    sitting_down = Datetime.now
-    sensors.each do |s|
-      if 
+
+   def self.determine_postures(sensor_array)
+    postures = Hash.new 
+    sensor_array.each do|s|
+      postures[s[0].created_at] = InputStream.determine_posture(s)
     end
+    return postures
   end
+
+  def self.determine_postures_time(sensor_array)
+    postures = Hash.new(Array.new()) 
+    sensor_array.each do|s|
+      postures[InputStream.determine_posture(s)].push(s[0].created_at)
+    end
+    return postures
+  end
+
+
 
   private
     def validate_user_id

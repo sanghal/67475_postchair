@@ -14,9 +14,16 @@
   </thead>
 
   <tbody>
-    <% @input_streams.each do |input_stream| %>
+    <% @good_result.each do |key,value| %>
+    <tr>
+        <td><%= key %></td>
+        <td><%= value %></td>
+    </tr>
+    <% end %>
+    <% @input_streams.each do |set,input| %>
+        <% input.each do |input_stream| %>
       <tr>
-        <td><%= input_stream.user_id %></td>
+        <td><%= input_stream.set_id %></td>
         <td><%= input_stream.position %></td>
         <td><%= input_stream.input_time.strftime("Printed on %m/%d/%I:%M") %></td>
         <td><%= input_stream.measurement %></td>
@@ -24,6 +31,7 @@
         <td><%= link_to 'Edit', edit_input_stream_path(input_stream) %></td>
         <td><%= link_to 'Destroy', input_stream, method: :delete, data: { confirm: 'Are you sure?' } %></td>
       </tr>
+    <% end %>
     <% end %>
   </tbody>
 </table>

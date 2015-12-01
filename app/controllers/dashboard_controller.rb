@@ -15,7 +15,6 @@ class DashboardController < ApplicationController
 
   # GET /input_streams/new
   def new
-    @input_stream = InputStream.new
   end
 
   # GET /input_streams/1/edit
@@ -25,41 +24,19 @@ class DashboardController < ApplicationController
   # POST /input_streams
   # POST /input_streams.json
   def create
-    @input_stream = InputStream.new(input_stream_params)
-
-    respond_to do |format|
-      if @input_stream.save
-        format.html { redirect_to @input_stream, notice: 'Input stream was successfully created.' }
-        format.json { render :show, status: :created, location: @input_stream }
-      else
-        format.html { render :new }
-        format.json { render json: @input_stream.errors, status: :unprocessable_entity }
-      end
-    end
+   
   end
 
   # PATCH/PUT /input_streams/1
   # PATCH/PUT /input_streams/1.json
   def update
-    respond_to do |format|
-      if @input_stream.update(input_stream_params)
-        format.html { redirect_to @input_stream, notice: 'Input stream was successfully updated.' }
-        format.json { render :show, status: :ok, location: @input_stream }
-      else
-        format.html { render :edit }
-        format.json { render json: @input_stream.errors, status: :unprocessable_entity }
-      end
-    end
+
   end
 
   # DELETE /input_streams/1
   # DELETE /input_streams/1.json
   def destroy
-    @input_stream.destroy
-    respond_to do |format|
-      format.html { redirect_to input_streams_url, notice: 'Input stream was successfully destroyed.' }
-      format.json { head :no_content }
-    end
+
   end
 
   private
