@@ -20,7 +20,7 @@ namespace :db do
 
 		positions = [1,2,3,4]
 			50.times do
-					input_time= Faker::Date.between(30.days.ago, Date.today)
+					input_time= Faker::Time.between(DateTime.now - 30, DateTime.now)
 					FactoryGirl.create(:input_stream, user_id: Sangha.id, position: 1, measurement: rand(700), input_time: input_time)
 					FactoryGirl.create(:input_stream, user_id: Sangha.id, position: 2, measurement: rand(700), input_time: input_time)
 					FactoryGirl.create(:input_stream, user_id: Sangha.id, position: 3, measurement: rand(700), input_time: input_time)

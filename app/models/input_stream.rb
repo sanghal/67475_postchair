@@ -11,7 +11,7 @@ class InputStream < ActiveRecord::Base
   validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   #Scopes
-  scope :by_time, -> { order("input_time DESC") }
+  scope :by_time, -> { order("created_at DESC") }
   scope :for_user, lambda { |user_id| where("user_id = ?", user_id) }
   #Value for recent is arbitrary, I set it to the past day
   scope :recent, -> { where("input_time > ? and input_time < ?", 1.day.ago, Time.now) }
@@ -24,9 +24,11 @@ class InputStream < ActiveRecord::Base
 	[[1,1],[2,1],[3,0],[4,0]] => 'CPR', # Cradling Phone Receiver
 	[[1,2],[2,2],[3,1],[4,2]] => 'NSB', # Not Sitting Back
 	[[1,2],[2,2],[3,0],[4,0]] => 'SS',  # Side Sitting
-	[[1,0],[2,0],[3,0],[4,0]] => 'NS',  # Not Sitting
-	[[1,2],[2,2],[3,2],[4,2]] => 'GP'   # Good Posutre
+	[[1,2],[2,2],[3,2],[4,2]] => 'GP', # Good Posutre
+        [[0,0],[0,0],[0,0],[0,0]] => 'NS'   # Not Sitting
   }
+
+
 
   BACK_POSITIONS.default = 'UK'
 
