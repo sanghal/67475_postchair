@@ -1,8 +1,13 @@
 <div class="container">
-<h3 style = "text-align: center"> History of your Postures </h3>
+<h4 style = "text-align: center"> History of your Postures </h4>
+    <div class="row">
+      <div class="col s4"><div class="boxed1"> <h5> 26% </h5> Increase over week</div></div>
+      <div class="col s4"><div class="boxed2"> <h5> 8.3 hr </h5> Average sitting time per day</div></div>
+      <div class="col s4"><div class="boxed3"><h5> 82% </h5>successful work break</div></div>
+    </div>
    <div class="row">
-      <div class="col s6"><%= pie_chart @result %></div>
-      <div class="col s6"><%= line_chart [{name: "Good Posture", data: @good_result}] %></div>
+      <div class="col s6"><h5 style = "text-align: center"> Overall Posture Analysis</h5><%= pie_chart @result %></div>
+      <div class="col s6"><h5 style = "text-align: center"> Performance over Time</h5><%= line_chart [{name: "Good Posture", data: @good_result}] %></div>
     </div>
 </div>         
 

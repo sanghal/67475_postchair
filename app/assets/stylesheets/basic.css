@@ -5,6 +5,38 @@ nav ul {
 body.sessions.new{
 	background: url('/assets/postchair2.jpg') no-repeat;
 	background-size: 100% auto;
+}
+
+.boxed1 {
+  display: table-cell;
+  color:white;
+  vertical-align: middle;
+  text-align: center;
+  width:230px;
+  height:230px;
+  background-color:blue;
+  opacity:0.5;
+}
+
+.boxed2 {
+  display: table-cell;
+  color:white;
+  vertical-align: middle;
+  text-align: center;
+  background-color:red;
+  opacity:0.5;
+  width:230px;
+  height:230px;
+}
 
 
+.boxed3 {
+  background-color: green;
+  color:white;
+  display: table-cell;
+  vertical-align: middle;
+  text-align: center;
+  opacity:0.5;
+  width:230px;
+  height:230px;
 }
