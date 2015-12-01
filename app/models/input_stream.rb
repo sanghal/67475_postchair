@@ -11,15 +11,13 @@ class InputStream < ActiveRecord::Base
   validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   #Scopes
-  scope :last_month, -> { where("created_at > ? and created_at < ?", 30.days.ago, Time.now) }
   scope :by_time, -> { order("created_at DESC") }
-  scope :by_set, -> { group("set_id") } 
-  scope :by_time_fake, -> { order("input_time DESC") }
   scope :for_user, lambda { |user_id| where("user_id = ?", user_id) }
   #Value for recent is arbitrary, I set it to the past day
-  scope :recent, -> { where("input_time > ? and input_time < ?", 1.day.ago, Time.now) }
+  scope :recent, -> { where("created_at > ? and created_at < ?", 1.day.ago, Time.now) }
   # Used in determining posture for small arrays
   scope :by_position, -> { order("position ASC") }
+  scope :by_set, -> { order("set_id ASC") }
 
   BACK_POSITIONS = {
 	[[1,2],[2,2],[3,0],[4,0]] => 'SSH', # Slouch with Shoulder Hunch
@@ -28,7 +26,7 @@ class InputStream < ActiveRecord::Base
 	[[1,2],[2,2],[3,1],[4,2]] => 'NSB', # Not Sitting Back
 	[[1,2],[2,2],[3,0],[4,0]] => 'SS',  # Side Sitting
 	[[1,2],[2,2],[3,2],[4,2]] => 'GP', # Good Posutre
-        [[0,0],[0,0],[0,0],[0,0]] => 'NS'   # Not Sitting
+  [[1,0],[2,0],[3,0],[4,0]] => 'NS'   # Not Sitting
   }
 
 
@@ -57,6 +55,27 @@ class InputStream < ActiveRecord::Base
     return sensors
   end
 
+  def self.iterative_posture(sensors, postures)
+    if sensors.length < 4
+      return postures
+    end
+    position_ids = [1,2,3,4]
+    next_iteration = Array.new
+    sensors.each do |i|
+      unless position_ids.find_index(i.position).nil?
+        position_ids.delete(i.position)
+        next_iteration.push(i)
+      end
+
+      if next_iteration.length > 3
+	sensors = sensors[sensors.index(i),(sensors.length-1)]
+        break
+      end
+    end
+    postures << InputStream.determine_posture(next_iteration)
+    return  InputStream.iterative_posture(sensors, postures)
+  end
+
   def self.determine_posture(sensors)
     if (sensors.length != 4)
 	return nil
@@ -65,28 +84,15 @@ class InputStream < ActiveRecord::Base
     sensors.each do |s|
       posturePreHash.push([s.position, InputStream.pressurize(s.measurement)])
     end
+    posturePreHash = posturePreHash.sort_by {|i| i.first }
     return BACK_POSITIONS[posturePreHash]
   end
 
   def self.recent_report(user)
     recent_sensors = InputStream.for_user(user).recent.by_time
-  end
-
-
-   def self.determine_postures(sensor_array)
-    postures = Hash.new 
-    sensor_array.each do|s|
-      postures[s[0].created_at] = InputStream.determine_posture(s)
-    end
-    return postures
-  end
-
-  def self.determine_postures_time(sensor_array)
-    postures = Hash.new(Array.new()) 
-    sensor_array.each do|s|
-      postures[InputStream.determine_posture(s)].push(s[0].created_at)
-    end
-    return postures
+    postures = InputStream.iterative_posture(recent_sensors, [])
+    results=Hash[postures.group_by {|x| x}.map {|k,v| [k,v.count]}]
+    return results
   end
 
 
