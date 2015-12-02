@@ -7,7 +7,6 @@ class InputStream < ActiveRecord::Base
   #The number 5 is arbitrary and pased on the amount of sensors our design currently implements (4)
   validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 5 }
   validates :input_time, presence: true
-  validates_datetime :input_time
   validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   #Scopes
@@ -30,6 +29,29 @@ class InputStream < ActiveRecord::Base
 	[[1,2],[2,2],[3,2],[4,2]] => 'GP', # Good Posutre
   [[1,0],[2,0],[3,0],[4,0]] => 'NS'   # Not Sitting
   }
+
+  POSITION_IMPROVEMENTS = {
+    'SB' => 'Swayback bro',
+    'UK' => 'Your posture is so bad we seriously dont even know how to fix it',
+    'CPR' => 'Cradline a phone is bad',
+    'NSB' => 'NOT SITTING BACK?!?',
+    'SS' => 'Side Sitting, OH NO!',
+    'GP' => 'Good Posture! Keep It Up!',
+    'NS' => 'Why are you using the application if you are not sitting?'
+  }
+
+  POSITION_IMPROVEMENTS.default = 'Your posture is so bad we seriously dont even know how to fix it'
+
+  def self.get_message(hash_table)
+    while (hash_table.max_by{|k,v| v} == 'NS' || hash_table.max_by{|k,v| v} == 'GP')
+      if hash_table.length == 1
+  break
+      else
+        hash_table.delete(hash_table.max_by{|k,v| v})
+      end
+    end
+    return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}]
+  end
 
 
 
