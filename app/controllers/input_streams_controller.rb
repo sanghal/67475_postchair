@@ -33,6 +33,20 @@ class InputStreamsController < ApplicationController
 
   # POST /input_streams
   # POST /input_streams.json
+
+def insertRound
+  ###primary key
+    @input_stream1 = InputStream.new(:measurement=>params["m1"], :position=>1, :user_id=>current_user.id, :set_id=>InputStream.count)
+    @input_stream2 = InputStream.new(:measurement=>params["m2"], :position=>2, :user_id=>current_user.id, :set_id=>InputStream.count)
+    @input_stream3 = InputStream.new(:measurement=>params["m3"], :position=>3, :user_id=>current_user.id, :set_id=>InputStream.count)
+    @input_stream4 = InputStream.new(:measurement=>params["m4"], :position=>4, :user_id=>current_user.id, :set_id=>InputStream.count)
+    @input_stream1.save
+    @input_stream2.save
+    @input_stream3.save
+    @input_stream4.save
+    render nothing: true
+  end
+
   def create
     @input_stream = InputStream.new(input_stream_params)
 
