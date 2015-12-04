@@ -7,7 +7,6 @@ class InputStream < ActiveRecord::Base
   #The number 5 is arbitrary and pased on the amount of sensors our design currently implements (4)
   validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 5 }
   validates :input_time, presence: true
-  validates_datetime :input_time
   validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   #Scopes
@@ -22,23 +21,20 @@ class InputStream < ActiveRecord::Base
   scope :by_position, -> { order("position ASC") }
 
   BACK_POSITIONS = {
-	[[1,2],[2,2],[3,0],[4,0]] => 'SSH', # Slouch with Shoulder Hunch
-	[[1,0],[2,0],[3,1],[4,2]] => 'SB',  # Swayback
-	[[1,1],[2,1],[3,0],[4,0]] => 'CPR', # Cradling Phone Receiver
-	[[1,2],[2,2],[3,1],[4,2]] => 'NSB', # Not Sitting Back
-	[[1,2],[2,2],[3,0],[4,0]] => 'SS',  # Side Sitting
-	[[1,2],[2,2],[3,2],[4,2]] => 'GP', # Good Posutre
-  [[0,0],[0,0],[0,0],[0,0]] => 'NS'   # Not Sitting
+    [[1,0],[2,0],[3,1],[4,2]] => 'SB',  # Swayback
+    [[1,1],[2,1],[3,0],[4,0]] => 'CPR', # Cradling Phone Receiver
+    [[1,2],[2,2],[3,1],[4,2]] => 'NSB', # Not Sitting Back
+    [[1,2],[2,2],[3,0],[4,0]] => 'SS',  # Side Sitting
+    [[1,2],[2,2],[3,2],[4,2]] => 'GP',  # Good Posture
+    [[1,0],[2,0],[3,0],[4,0]] => 'NS'   # Not Sitting
   }
-
-
-
   BACK_POSITIONS.default = 'UK'
 
+  #Returns an array of up to three of the most recent input_streams
   def self.find_last_posture_sensors(user)
     position_ids = [1,2,3,4]
+    sensor_input = InputStream.for_user(user).by_time #descending order
     # To limit data required when larger amount of data stored
-    sensor_input = InputStream.for_user(user).by_time
     if sensor_input.length < 4
       return nil
     end
@@ -57,15 +53,25 @@ class InputStream < ActiveRecord::Base
     return sensors
   end
 
+  # determine_posture takes in an array of input_streams and returns the posture
+  # that they map to.
   def self.determine_posture(sensors)
-    if (sensors.length != 4)
-	return nil
+    total_number_of_sensors = 4
+    to_return = 'UK' #Our default value, in case the sensors don't match up
+
+    #Only perform a check when the number of sensors passed to us is correct
+    if (sensors.length == total_number_of_sensors)
+      posturePreHash = Array.new
+      #Convert the input_streams into our hash format
+      sensors.each do |s|
+        posturePreHash.push([s.position, InputStream.pressurize(s.measurement)])
+      end
+
+      #Actually find which one it maps to
+      to_return = BACK_POSITIONS[posturePreHash]
     end
-    posturePreHash = Array.new
-    sensors.each do |s|
-      posturePreHash.push([s.position, InputStream.pressurize(s.measurement)])
-    end
-    return BACK_POSITIONS[posturePreHash]
+    
+    return to_return
   end
 
   def self.recent_report(user)
@@ -88,20 +94,19 @@ class InputStream < ActiveRecord::Base
     return postures
   end
 
-
-
   private
-    def validate_user_id
-      errors.add(:user_id, "is not an employee in our system") unless User.exists?(self.user_id)
+  
+  def validate_user_id
+    errors.add(:user_id, "is not an employee in our system") unless User.exists?(self.user_id)
+  end
+  
+  def self.pressurize(pValue)
+    if (pValue == 0)
+      return 0
+    elsif (pValue < 451)
+      return 1
+    else 
+      return 2
     end
-
-    def self.pressurize(pValue)
-      if (pValue == 0)
-        return 0
-      elseif (pValue < 451)
-        return 1
-      else 
-        return 2
-      end
-    end
+  end
 end

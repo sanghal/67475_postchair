@@ -45,7 +45,11 @@ group :development, :test do
   # Call 'byebug' anywhere in the code to stop execution and get a debugger console
   gem 'byebug'
   gem 'factory_girl_rails'
-
+  gem 'shoulda', '3.5.0'
+  gem 'shoulda-matchers', '2.7.0'
+  gem 'simplecov', '0.9.1'
+  gem 'single_test', '0.6.0'
+  gem 'cucumber-rails', require: false
 end
 
 group :development do
