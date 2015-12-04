@@ -6,6 +6,15 @@ body.sessions.new{
 	background: url('/assets/postchair2.jpg') no-repeat;
 	background-size: 100% auto;
 }
+.boxed {
+  display: table-cell;
+  color:white;
+  vertical-align: middle;
+  text-align: center;
+  width:250px;
+  height:250px;
+  opacity:0.5;
+}
 
 .boxed1 {
   display: table-cell;

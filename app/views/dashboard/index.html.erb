@@ -1,7 +1,28 @@
 <p id="notice"><%= notice %></p>
-<div class="container">
 
-<%= @message %>
-<%= image_tag("#{@posture}.png", :style => "border:1px; width:300px; height:500px; left-margin:40%")%>
-
-</div>  
+    <div class="row">
+      <div class="col s4">
+      	<table class="bordered highlight" >
+  <thead>
+    <tr>
+      <th>Notification</th>
+    </tr>
+  </thead>
+  		<tbody>
+    		<% @messages.each do |message| %>
+      		<tr>
+        		<td><%= message %></td>
+      		</tr>
+    		<% end %>
+  		</tbody>
+		</table>
+      </div>
+      <div class="col s5">
+      <%= image_tag("#{@posture}.png", :style => "border:1px; width:300px; height:500px;")%>
+      </div>
+      <div class="col s3">
+      <div class="boxed", style = "background-color:<%= @color %>"> <h5> Status </h5></div> <br>
+      <div class="boxed",  style = "background-color: blue"> <h5> 3 hr </h5> Time sitted</div>
+      </div>
+  
+ </div>
