@@ -38,17 +38,17 @@ class InputStream < ActiveRecord::Base
     'NS' => 'Why are you using the application if you are not sitting?'
   }
 
-  POSITION_IMPROVEMENTS.default = 'Your posture is so bad we seriously dont even know how to fix it'
+  #POSITION_IMPROVEMENTS.default = 'Your posture is so bad we seriously dont even know how to fix it'
 
   def self.get_message(hash_table)
-    while (hash_table.max_by{|k,v| v} == 'NS' || hash_table.max_by{|k,v| v} == 'GP')
+    while (hash_table.max_by{|k,v| v}[0] == 'NS' || hash_table.max_by{|k,v| v}[0] == 'GP')
       if hash_table.length == 1
   break
       else
         hash_table.delete(hash_table.max_by{|k,v| v})
       end
     end
-    return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}]
+    return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}[0]]
   end
 
 
