@@ -25,7 +25,7 @@
       <tr>
         <td><%= input_stream.set_id %></td>
         <td><%= input_stream.position %></td>
-        <td><%= input_stream.input_time.strftime("Printed on %m/%d/%I:%M") %></td>
+        <td><%= input_stream.created_at.strftime("Printed on %m/%d/%I:%M") %></td>
         <td><%= input_stream.measurement %></td>
         <td><%= link_to 'Show', input_stream %></td>
         <td><%= link_to 'Edit', edit_input_stream_path(input_stream) %></td>
