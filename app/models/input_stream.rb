@@ -95,7 +95,7 @@ def self.get_message(hash_table)
     to_return = 'UK' #Our default value, in case the sensors don't match up
 
     #Only perform a check when the number of sensors passed to us is correct
-    if (sensors.length == total_number_of_sensors)
+    if(sensors.length == total_number_of_sensors)
       posturePreHash = Array.new
       #Convert the input_streams into our hash format
       sensors.each do |s|
@@ -153,6 +153,34 @@ def self.get_message(hash_table)
     return  InputStream.iterative_posture(sensors, postures)
   end
 
+  def self.current_time_seated(user)
+    time_between_records = 3 #seconds
+    sensors = user.input_streams.by_time
+
+    index = 0
+    prev = nil
+    sum = 0
+    cur = sensors.first
+    while !cur.nil? do
+      cur = sensors[index]
+      if(prev.nil?)
+        sum += time_between_records
+      else
+        difference = (((prev.created_at - cur.created_at) * 24 * 60 * 60).to_i)
+        if(difference <= time_between_records)
+          if(difference != 0)
+            sum += time_between_records
+          end
+        else
+          break
+        end #if
+      end #if
+      prev = cur
+      index = index + 1
+    end #while
+    return sum
+  end
+  
   private
   
   def validate_user_id

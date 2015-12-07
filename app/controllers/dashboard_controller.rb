@@ -8,7 +8,7 @@ class DashboardController < ApplicationController
     @posture = InputStream.determine_posture(@input_streams)
     @posture_hash = InputStream.recent_report(current_user.id)
     @messages = InputStream.get_message(@posture_hash)
-    @color = InputStream::COLOR['GP']
+    @color = InputStream::COLOR[@posture]
   end
 
   # GET /input_streams/1
