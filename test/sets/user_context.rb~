@@ -1,0 +1,13 @@
+module Contexts
+  module UserContext
+
+    def create_one_user_context
+
+    end
+
+    def delete_one_user_context
+
+    end
+    
+  end
+end

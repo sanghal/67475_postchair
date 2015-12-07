@@ -9,7 +9,7 @@ class ManagerAssociation < ActiveRecord::Base
   validate :validate_employee_id, :validate_manager_id
 
   #Scopes
-  scope :active, where("active = ?", true)
+  scope :active, -> {where("active = ?", true)}
   
 private
 

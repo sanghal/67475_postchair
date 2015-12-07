@@ -1,7 +1,11 @@
 Rails.application.routes.draw do
   resources :manager_associations
   resources :input_streams
-  resources :users
+  resources :users do
+    member do
+      get 'posture'
+    end
+  end
   resources :sessions
 
   get 'login' => 'sessions#new', as: :home

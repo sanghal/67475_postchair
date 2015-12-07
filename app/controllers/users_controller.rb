@@ -51,6 +51,21 @@ class UsersController < ApplicationController
     end
   end
 
+  def posture
+    user_id = params[:id]
+    if(user_id.nil? || User.all.where(id: user_id).first.nil?)
+      redirect_to home_url
+    else
+      sensors = InputStream.find_last_posture_sensors(user_id)
+      #user = User.all.where(id: user_id)
+      posture = InputStream.determine_posture(sensors)
+      posture_hash = InputStream.recent_report(user_id)
+      message = InputStream.get_message(posture_hash)
+      posture_json = {posture: posture, message: message}
+      render json: posture_json
+    end
+  end
+  
   # DELETE /users/1
   # DELETE /users/1.json
   def destroy

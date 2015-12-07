@@ -4,10 +4,8 @@ one:
   manager_id: 1
   employee_id: 1
   active: MyString
-  boolean: MyString
 
 two:
   manager_id: 1
   employee_id: 1
   active: MyString
-  boolean: MyString
