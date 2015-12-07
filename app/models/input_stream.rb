@@ -16,7 +16,7 @@ class InputStream < ActiveRecord::Base
   scope :by_time_fake, -> { order("input_time DESC") }
   scope :for_user, lambda { |user_id| where("user_id = ?", user_id) }
   #Value for recent is arbitrary, I set it to the past day
-  scope :recent, -> { where("created_at > ? and created_at < ?", 1.day.ago, Time.now) }
+  scope :recent, -> { where("created_at > ? and created_at < ?", 10.day.ago, Time.now) }
   # Used in determining posture for small arrays
   scope :by_position, -> { order("position ASC") }
 
@@ -30,27 +30,39 @@ class InputStream < ActiveRecord::Base
   }
   BACK_POSITIONS.default = 'UK'
 
+  COLOR = {
+    'SB' => 'green',
+    'UK' => 'yellow',
+    'CPR' => 'yellow',
+    'NSB' => 'yellow',
+    'SS' => 'yellow',
+    'GP' => 'green',
+    'NS' => 'green'
+  }
+
   POSITION_IMPROVEMENTS = {
-    'SB' => 'Swayback bro',
-    'UK' => 'Your posture is so bad we seriously dont even know how to fix it',
-    'CPR' => 'Cradline a phone is bad',
-    'NSB' => 'NOT SITTING BACK?!?',
-    'SS' => 'Side Sitting, OH NO!',
-    'GP' => 'Good Posture! Keep It Up!',
-    'NS' => 'Why are you using the application if you are not sitting?'
+    'SB' => ['Push your hips more inward','Strengthen up your back', 'Chin up'],
+    'UK' => ['Strengthen up your back', 'Moving only your head, drop your chin down and in toward your sternum while stretching the back of your neck'],
+    'CPR' => ['Strengthen up your back','Cradline a phone is bad', 'Have both feet touching the floor', 'Chin up'],
+    'NSB' => ['Push your hips inward toward chair','Hips align', 'Strengthen your back', 'Have both feet touching the floor'],
+    'SS' => ['Strengthen up your back', 'Try adjusting your body towards desk', 'put your feet in parallel position', 'Chin up'],
+    'GP' => ['Good Posture! Keep It Up!','Good Posture! Keep It Up!','Good Posture! Keep It Up!'],
+    'NS' => ['Currently not in chair']
   }
   POSITION_IMPROVEMENTS.default = 'Your posture is so bad we seriously dont even know how to fix it'
 
-  def self.get_message(hash_table)
-    while (hash_table.max_by{|k,v| v} == 'NS' || hash_table.max_by{|k,v| v} == 'GP')
-      if hash_table.length == 1
-  break
-      else
-        hash_table.delete(hash_table.max_by{|k,v| v})
-      end
-    end
-    return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}]
-  end
+def self.get_message(hash_table)
+   
+    while (hash_table.max_by{|k,v| v}[0] == 'NS' || hash_table.max_by{|k,v| v}[0] == 'GP')
+       if hash_table.length == 1
+   break
+       else
+         hash_table.delete(hash_table.max_by{|k,v| v})
+       end
+     end
+
+    return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}[0]]
+   end
 
 
   #Returns an array of up to three of the most recent input_streams
@@ -133,7 +145,7 @@ class InputStream < ActiveRecord::Base
       end
 
       if next_iteration.length > 3
-    sensors = sensors[sensors.index(i),(sensors.length-1)]
+        sensors = sensors[sensors.index(i),(sensors.length-1)]
         break
       end
     end

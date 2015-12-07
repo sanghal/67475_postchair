@@ -55,8 +55,11 @@ class UsersController < ApplicationController
     user_id = params[:id]
     sensors = InputStream.find_last_posture_sensors(user_id)
     #user = User.all.where(id: user_id)
-    posture = {posture: InputStream.determine_posture(sensors)}
-    render json: posture
+    posture = InputStream.determine_posture(sensors)
+    posture_hash = InputStream.recent_report(user_id)
+    message = InputStream.get_message(posture_hash)
+    posture_json = {posture: posture, message: posture_hash}
+    render json: posture_json
   end
   
   # DELETE /users/1
