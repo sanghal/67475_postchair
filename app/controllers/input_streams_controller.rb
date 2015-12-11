@@ -6,7 +6,7 @@ class InputStreamsController < ApplicationController
   # GET /input_streams
   # GET /input_streams.json
   def index
-    @streams = InputStream.last_month
+    @streams = current_user.input_streams.recent
     @input_streams = @streams.group_by { |t| t.set_id}
     @postures = InputStream.determine_postures(@input_streams.values)
     @result = Hash.new(0)
@@ -15,48 +15,47 @@ class InputStreamsController < ApplicationController
     @good_result = Hash.new(0)
     @good_postures.each { |prod, value| @good_result[prod.strftime("%d") ] += 1 } 
     @bad_postures = @postures.each.select { |m| m[0] != "GP" }
-   #@postures = InputStream.determine_posture(@input_streams.each)
-
+    #@postures = InputStream.determine_posture(@input_streams.each)  
   end
-
+  
   # GET /input_streams/1
   # GET /input_streams/1.json
   def show
   end
-
+  
   # GET /input_streams/new
   def new
     @input_stream = InputStream.new
   end
-
+  
   # GET /input_streams/1/edit
   def edit
   end
-
+  
   # POST /input_streams
   # POST /input_streams.json
-
+  
   def create
-
+    
     url = URI.parse('https://www.facebook.com/')
     req = Net::HTTP::Get.new(url.to_s)
     res = Net::HTTP.start(url.host, url.port) {|http|
       http.request(req)
     }
     puts res.body
-  #   @input_stream = InputStream.new(input_stream_params)
-
-  #   respond_to do |format|
-  #     if @input_stream.save
-  #       format.html { redirect_to @input_stream, notice: 'Input stream was successfully created.' }
-  #       format.json { render :show, status: :created, location: @input_stream }
-  #     else
-  #       format.html { render :new }
-  #       format.json { render json: @input_stream.errors, status: :unprocessable_entity }
-  #     end
-  #   end
-  # end
-
+    #   @input_stream = InputStream.new(input_stream_params)
+    
+    #   respond_to do |format|
+    #     if @input_stream.save
+    #       format.html { redirect_to @input_stream, notice: 'Input stream was successfully created.' }
+    #       format.json { render :show, status: :created, location: @input_stream }
+    #     else
+    #       format.html { render :new }
+    #       format.json { render json: @input_stream.errors, status: :unprocessable_entity }
+    #     end
+    #   end
+  end
+    
   # PATCH/PUT /input_streams/1
   # PATCH/PUT /input_streams/1.json
   def update
@@ -82,13 +81,13 @@ class InputStreamsController < ApplicationController
   end
 
   private
-    # Use callbacks to share common setup or constraints between actions.
-    def set_input_stream
-      @input_stream = InputStream.find(params[:id])
-    end
-
-    # Never trust parameters from the scary internet, only allow the white list through.
-    def input_stream_params
-      params.require(:input_stream).permit(:user_id, :position, :input_time, :measurement)
-    end
+  # Use callbacks to share common setup or constraints between actions.
+  def set_input_stream
+    @input_stream = InputStream.find(params[:id])
+  end
+  
+  # Never trust parameters from the scary internet, only allow the white list through.
+  def input_stream_params
+    params.require(:input_stream).permit(:user_id, :position, :input_time, :measurement)
+  end
 end

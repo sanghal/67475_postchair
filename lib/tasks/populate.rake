@@ -1,5 +1,4 @@
 namespace :db do 
-<<<<<<< HEAD
   desc "Erase and fill database"
   # creating a rake task within db namespace called 'populate'
   # executing 'rake db:populate' will cause this script to run

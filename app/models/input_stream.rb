@@ -68,7 +68,7 @@ class InputStream < ActiveRecord::Base
     return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}[0]]
   end
   
-
+  
   #Returns an array of up to three of the most recent input_streams
   def self.find_last_posture_sensors(user)
     position_ids = [1,2,3,4]
@@ -77,21 +77,21 @@ class InputStream < ActiveRecord::Base
     if sensor_input.length < 4
       return nil
     end
-
+    
     sensors = Array.new
     sensor_input.each do |i|
       unless position_ids.find_index(i.position).nil?
         position_ids.delete(i.position)
         sensors.push(i)
       end
-
+      
       if sensors.length > 3
         break
       end
     end
     return sensors
   end
-
+  
   # determine_posture takes in an array of input_streams and returns the posture
   # that they map to.
   def self.determine_posture(sensors)
@@ -121,14 +121,14 @@ class InputStream < ActiveRecord::Base
     return results
   end
 
-   def self.determine_postures(sensor_array)
+  def self.determine_postures(sensor_array)
     postures = Hash.new 
     sensor_array.each do|s|
       postures[s[0].created_at] = InputStream.determine_posture(s)
     end
     return postures
   end
-
+  
   def self.determine_postures_time(sensor_array)
     postures = Hash.new(Array.new()) 
     sensor_array.each do|s|
@@ -194,6 +194,48 @@ class InputStream < ActiveRecord::Base
     else
       return "" + sum.to_s + " seconds"
     end
+  end
+
+  # Expects current_user.input_streams.recent.by_time
+  def self.change_over_week(streams)
+    times_per_day = [0,0,0,0,0,0,0,0,0,0] # 10 spots because .recent returns last 10 days
+    prev_streams = []
+    prev_time = DateTime.now
+    streams.each do |s|
+      index = Date.today - s.created_at.to_date
+
+      #If this is the same as a previous stream, we want to find out if these streams are GP
+      if(s.created_at == prev_time)
+        prev_streams << s
+        #If they are good posture, increment the amount of good posture that day by 3
+        if InputStream.determine_posture(prev_streams) == "GP"
+          times_per_day[index] += 3
+        end
+      else
+        #if it was different, set up the next round
+        prev_time = s.created_at
+        prev_streams = [s]
+      end
+    end
+
+    #Now that we're here, we have the number of good postures per day and need to calculate increase
+    differences_per_day = 0.0
+    #want to operate from oldest day to newest, so flip array
+    times_per_day.reverse!
+    #we have ten items, so need to index 3 in to get to 7 days ago
+    prev_times = times_per_day[3]
+    #Need to exclude first four, so countdown
+    countdown = 4
+    times_per_day.each do |t|
+      if countdown > 0
+        countdown -= 1
+      else
+        differences_per_day += (t - prev_times) > 0 ? (t - prev_times) : 0
+        prev_times = t
+      end
+    end
+    differences_per_day = differences_per_day / 7.0
+    return (differences_per_day.to_i.to_f == differences_per_day ? differences_per_day.to_i : differences_per_day.round(2)).to_s + "%"
   end
   
   private
