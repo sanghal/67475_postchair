@@ -1,4 +1,6 @@
 class InputStreamsController < ApplicationController
+
+  require 'net/http'
   before_action :set_input_stream, only: [:show, :edit, :update, :destroy]
 
   # GET /input_streams
@@ -34,32 +36,26 @@ class InputStreamsController < ApplicationController
   # POST /input_streams
   # POST /input_streams.json
 
-def insertRound
-  ###primary key
-    @input_stream1 = InputStream.new(:measurement=>params["m1"], :position=>1, :user_id=>current_user.id, :set_id=>InputStream.count)
-    @input_stream2 = InputStream.new(:measurement=>params["m2"], :position=>2, :user_id=>current_user.id, :set_id=>InputStream.count)
-    @input_stream3 = InputStream.new(:measurement=>params["m3"], :position=>3, :user_id=>current_user.id, :set_id=>InputStream.count)
-    @input_stream4 = InputStream.new(:measurement=>params["m4"], :position=>4, :user_id=>current_user.id, :set_id=>InputStream.count)
-    @input_stream1.save
-    @input_stream2.save
-    @input_stream3.save
-    @input_stream4.save
-    render nothing: true
-  end
-
   def create
-    @input_stream = InputStream.new(input_stream_params)
 
-    respond_to do |format|
-      if @input_stream.save
-        format.html { redirect_to @input_stream, notice: 'Input stream was successfully created.' }
-        format.json { render :show, status: :created, location: @input_stream }
-      else
-        format.html { render :new }
-        format.json { render json: @input_stream.errors, status: :unprocessable_entity }
-      end
-    end
-  end
+    url = URI.parse('https://www.facebook.com/')
+    req = Net::HTTP::Get.new(url.to_s)
+    res = Net::HTTP.start(url.host, url.port) {|http|
+      http.request(req)
+    }
+    puts res.body
+  #   @input_stream = InputStream.new(input_stream_params)
+
+  #   respond_to do |format|
+  #     if @input_stream.save
+  #       format.html { redirect_to @input_stream, notice: 'Input stream was successfully created.' }
+  #       format.json { render :show, status: :created, location: @input_stream }
+  #     else
+  #       format.html { render :new }
+  #       format.json { render json: @input_stream.errors, status: :unprocessable_entity }
+  #     end
+  #   end
+  # end
 
   # PATCH/PUT /input_streams/1
   # PATCH/PUT /input_streams/1.json

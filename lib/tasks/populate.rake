@@ -1,4 +1,5 @@
 namespace :db do 
+<<<<<<< HEAD
   desc "Erase and fill database"
   # creating a rake task within db namespace called 'populate'
   # executing 'rake db:populate' will cause this script to run
@@ -32,28 +33,28 @@ namespace :db do
       FactoryGirl.create(:input_stream,
                          user_id: Sangha.id,
                          position: 1,
-                         measurement: [0, 450, 700].sample,
+                         measurement: [0, 700].sample,
                          created_at: input_time,
                          updated_at: input_time,
                          set_id: i)
       FactoryGirl.create(:input_stream,
                          user_id: Sangha.id,
                          position: 2,
-                         measurement: [0, 450, 700].sample,
+                         measurement: [0, 700].sample,
                          created_at: input_time,
                          updated_at: input_time,
                          set_id: i)
       FactoryGirl.create(:input_stream,
                          user_id: Sangha.id,
                          position: 3,
-                         measurement: [0, 450, 700].sample,
+                         measurement: [0, 700].sample,
                          created_at: input_time,
                          updated_at: input_time,
                          set_id: i)
       FactoryGirl.create(:input_stream,
                          user_id: Sangha.id,
                          position: 4,
-                         measurement: [0, 450, 700].sample,
+                         measurement: [0, 700].sample,
                          created_at: input_time,
                          updated_at: input_time,
                          set_id: i)
