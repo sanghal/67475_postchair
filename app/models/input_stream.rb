@@ -29,7 +29,7 @@ class InputStream < ActiveRecord::Base
     [[1,0],[2,0],[3,0],[4,0]] => 'NS'   # Not Sitting
   }
   BACK_POSITIONS.default = 'UK'
-
+  
   COLOR = {
     'SB' => 'green',
     'UK' => 'yellow',
@@ -51,19 +51,23 @@ class InputStream < ActiveRecord::Base
   }
   POSITION_IMPROVEMENTS.default = 'Your posture is so bad we seriously dont even know how to fix it'
 
-def self.get_message(hash_table)
-   
+  def self.get_message(hash_table)
+    if(hash_table.nil? || hash_table.empty?)
+      # This happens when the user has no input streams
+      return POSITION_IMPROVEMENTS['NS']
+    end
+    
     while (hash_table.max_by{|k,v| v}[0] == 'NS' || hash_table.max_by{|k,v| v}[0] == 'GP')
-       if hash_table.length == 1
-   break
-       else
-         hash_table.delete(hash_table.max_by{|k,v| v})
-       end
-     end
-
+      if hash_table.length == 1
+        break
+      else
+        hash_table.delete(hash_table.max_by{|k,v| v})
+      end
+    end
+    
     return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}[0]]
-   end
-
+  end
+  
 
   #Returns an array of up to three of the most recent input_streams
   def self.find_last_posture_sensors(user)
@@ -160,9 +164,8 @@ def self.get_message(hash_table)
     index = 0
     prev = nil
     sum = 0
-    cur = sensors.first
+    cur = sensors[index]
     while !cur.nil? do
-      cur = sensors[index]
       if(prev.nil?)
         sum += time_between_records
       else
@@ -177,8 +180,20 @@ def self.get_message(hash_table)
       end #if
       prev = cur
       index = index + 1
+      cur = sensors[index]
     end #while
-    return sum
+
+    ## now convert the sum into a string that also displays number of seconds
+    #check if it's in hours
+    seconds_in_minute = 60
+    seconds_in_hour = seconds_in_minute * 60
+    if (sum / seconds_in_hour) > 0
+      return "" + (sum / seconds_in_hour).to_s + " hours"
+    elsif sum / seconds_in_minute > 0
+      return "" + (sum / seconds_in_minute).to_s + " minutes"
+    else
+      return "" + sum.to_s + " seconds"
+    end
   end
   
   private
@@ -196,4 +211,5 @@ def self.get_message(hash_table)
       return 2
     end
   end
+
 end
