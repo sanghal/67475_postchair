@@ -7,7 +7,7 @@ class HistoryController < ApplicationController
     if current_user.nil?
       redirect_to login_url
     end
-    @streams = InputStream.last_month.by_position
+    @streams = InputStream.last_month
     @input_streams = @streams.group_by { |t| t.set_id}
     @postures = InputStream.determine_postures(@input_streams.values)
     @result = Hash.new(0)
@@ -15,11 +15,8 @@ class HistoryController < ApplicationController
 
     @good_postures = @postures.select {|key,value| value == "GP"}
     @good_result = Hash.new(0)
-    @good_postures.each { |prod, value| @good_result[prod] += 1 } 
+    @good_postures.each { |prod, value| @good_result[prod.to_date ] += 1 } 
 
-    @bad_postures = @postures.each.select { |m| m[0] != "GP" }
-    @bad_result = Hash.new(0)
-    @bad_postures.each { |prod, value| @good_result[prod] += 1 } 
     # @postures = InputStream.determine_posture(@input_streams.each)
   end
 
