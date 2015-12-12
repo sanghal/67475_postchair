@@ -6,7 +6,7 @@ class InputStreamsController < ApplicationController
   # GET /input_streams
   # GET /input_streams.json
   def index
-    @streams = InputStream.last_month
+    @streams = current_user.input_streams.recent
     @input_streams = @streams.group_by { |t| t.set_id}
     @postures = InputStream.determine_postures(@input_streams.values)
     @result = Hash.new(0)

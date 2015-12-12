@@ -3,7 +3,10 @@ class HistoryController < ApplicationController
 
   # GET /input_streams
   # GET /input_streams.json
-  def index
+   def index
+    if current_user.nil?
+      redirect_to login_url
+    end
     @streams = InputStream.last_month
     @input_streams = @streams.group_by { |t| t.set_id}
     @postures = InputStream.determine_postures(@input_streams.values)
