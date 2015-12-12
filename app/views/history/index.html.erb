@@ -7,8 +7,9 @@
     </div>
    <div class="row">
       <div class="col s6"><h5 style = "text-align: center"> Overall Posture Analysis</h5><%= pie_chart @result %></div>
-      <div class="col s6"><h5 style = "text-align: center"> Performance over Time</h5><%= line_chart [{name: "Good Posture", data: @bad_result}] %></div>
+      <div class="col s6"><h5 style = "text-align: center"> Performance over Time</h5><%= line_chart [{name: "Good Posture", data: @good_result}] %></div>
     </div>
+
 </div>         
 
 
