@@ -30,25 +30,34 @@ class InputStream < ActiveRecord::Base
   BACK_POSITIONS.default = 'UK'
 
   COLOR = {
-    'SB' => 'green',
-    'UK' => 'yellow',
-    'CPR' => 'yellow',
-    'NSB' => 'yellow',
-    'SS' => 'yellow',
+    'SB' => 'orange',
+    'UK' => 'orange',
+    'CPR' => 'orange',
+    'NSB' => 'orange',
+    'SS' => 'orange',
     'GP' => 'green',
-    'NS' => 'green'
+    'NS' => 'grey'
+  }
+
+  POSITION_NAME = {
+    'SS' => 'Slouching Position',
+    'SB' => 'Sway Back',
+    'UK' => 'Light Weight Position',
+    'CPR' => 'Cradling a Phone Position',
+    'NSB' => 'Not Sitting Back',
+    'GP' => 'Good Posture',
+    'NS' => 'Not Sitting'
   }
 
   POSITION_IMPROVEMENTS = {
-    'SB' => ['Push your hips more inward','Strengthen up your back', 'Chin up'],
-    'UK' => ['Strengthen up your back', 'Moving only your head, drop your chin down and in toward your sternum while stretching the back of your neck'],
-    'CPR' => ['Strengthen up your back','Cradline a phone is bad', 'Have both feet touching the floor', 'Chin up'],
-    'NSB' => ['Push your hips inward toward chair','Hips align', 'Strengthen your back', 'Have both feet touching the floor'],
-    'SS' => ['Strengthen up your back', 'Try adjusting your body towards desk', 'put your feet in parallel position', 'Chin up'],
-    'GP' => ['Good Posture! Keep It Up!','Good Posture! Keep It Up!','Good Posture! Keep It Up!'],
+    'SB' => ['Too large of an inward curve in the lower back','You sitting too far back in the chair','Push your hips more inward','Strengthen up your back', 'Chin up'],
+    'UK' => ['Strengthen up your back', 'Moving only your head, drop your chin down and in toward your sternum while stretching the back of your neck', 'Have both feet touching the floor', 'Chin up','Bring more weight of your body down to the chair', 'Look straight'],
+    'CPR' => ['You might be carrying something heavy on one side of the body','Strengthen up your back','Do not keep your head too high or low', 'Have both feet touching the floor', 'Chin up'],
+    'SS' => ['Strengthen up your back', 'Moving only your head, drop your chin down and in toward your sternum while stretching the back of your neck', 'Have both feet touching the floor', 'Chin up','Bring more weight of your body down to the chair', 'Look straight'],
+    'NSB' => ['You are not sitting back in the chair','You are allowing your back to do all the work','Push your hips inward toward chair','Have your hips align', 'Strengthen your back', 'Have both feet touching the floor'],
+    'GP' => ['Good Posture! Keep It Up!'],
     'NS' => ['Currently not in chair']
   }
-  POSITION_IMPROVEMENTS.default = 'Your posture is so bad we seriously dont even know how to fix it'
 
 def self.get_message(hash_table)
     if(hash_table.nil? || hash_table.empty?)
