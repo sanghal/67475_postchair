@@ -64,13 +64,13 @@ class InputStream < ActiveRecord::Base
       # This happens when the user has no input streams
       return POSITION_IMPROVEMENTS['NS']
     end
-    while (hash_table.max_by{|k,v| v}[0] == 'NS' || hash_table.max_by{|k,v| v}[0] == 'GP')
-      if hash_table.length == 1
-        break
-      else
-        hash_table.delete(hash_table.max_by{|k,v| v})
-      end
-    end
+#    while (hash_table.max_by{|k,v| v}[0] == 'NS' || hash_table.max_by{|k,v| v}[0] == 'GP')
+ #     if hash_table.length == 1
+  #      break
+  #    else
+  #      hash_table.delete(hash_table.max_by{|k,v| v})
+  #    end
+  #  end
     
     return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}[0]]
   end
@@ -252,9 +252,9 @@ class InputStream < ActiveRecord::Base
   end
   
   def self.pressurize(pValue)
-    if (pValue == 0)
+    if (pValue < 30)
       return 0
-    elsif (pValue < 451)
+    elsif (pValue < 1501)
       return 1
     else 
       return 2

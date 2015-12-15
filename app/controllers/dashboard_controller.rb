@@ -4,7 +4,7 @@ class DashboardController < ApplicationController
   # GET /input_streams
   # GET /input_streams.json
   def index
-    @input_streams = InputStream.by_time.limit(4).by_position
+    @input_streams = InputStream.by_time.by_position.limit(4)
     @posture = InputStream.determine_posture(@input_streams)
     @posture_hash = InputStream.recent_report(current_user.id)
     @messages = InputStream.get_message(@posture_hash)

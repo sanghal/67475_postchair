@@ -7,7 +7,7 @@ class InputStreamsController < ApplicationController
   # GET /input_streams
   # GET /input_streams.json
   def index
-    @streams = current_user.input_streams.recent
+    @streams = current_user.input_streams.recent.by_time
     @input_streams = @streams.group_by { |t| t.set_id}
     @postures = InputStream.determine_postures(@input_streams.values)
     @result = Hash.new(0)
@@ -23,13 +23,13 @@ class InputStreamsController < ApplicationController
 
   def insertRound
     user_id = current_user.nil? ? 1 : current_user.id
-    @input_stream1 = InputStream.create(:measurement=>params["m1"].to_i, :position=>1, :user_id=>user_id)
+    @input_stream1 = InputStream.create(:measurement=>params["m1"].to_i, :position=>1, :user_id=>user_id, :set_id=>InputStream.count)
     puts params["m1"].to_i
-    @input_stream2 = InputStream.create(:measurement=>params["m2"].to_i, :position=>2, :user_id=>user_id)
+    @input_stream2 = InputStream.create(:measurement=>params["m2"].to_i, :position=>2, :user_id=>user_id, :set_id=>InputStream.count-1)
     puts params["m2"].to_i
-    @input_stream3 = InputStream.create(:measurement=>params["m3"].to_i, :position=>3, :user_id=>user_id)
+    @input_stream3 = InputStream.create(:measurement=>params["m3"].to_i, :position=>3, :user_id=>user_id, :set_id=>InputStream.count-2)
     puts params["m3"].to_i
-    @input_stream4 = InputStream.create(:measurement=>params["m4"].to_i, :position=>4, :user_id=>user_id)
+    @input_stream4 = InputStream.create(:measurement=>params["m4"].to_i, :position=>4, :user_id=>user_id, :set_id=>InputStream.count-3)
     puts params["m4"].to_i
     @input_stream1.save!
     @input_stream2.save!
