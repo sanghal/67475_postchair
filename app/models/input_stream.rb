@@ -3,11 +3,11 @@ class InputStream < ActiveRecord::Base
   belongs_to :user
 
   #Validations
-  validates :user_id, presence: true, numericality: { only_integer: true }
+  #validates :user_id, presence: true, numericality: { only_integer: true }
   #The number 5 is arbitrary and pased on the amount of sensors our design currently implements (4)
-  validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 5 }
-  validates :input_time, presence: true
-  validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
+  #validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 5 }
+  #validates :input_time, presence: true
+  #validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   #Scopes
   scope :last_month, -> { where("created_at > ? and created_at < ?", 30.days.ago, Time.now) }
@@ -169,8 +169,8 @@ class InputStream < ActiveRecord::Base
       if(prev.nil?)
         sum += time_between_records
       else
-        difference = (((prev.created_at - cur.created_at) * 24 * 60 * 60).to_i)
-        if(difference <= time_between_records)
+        difference = ((prev.created_at - cur.created_at) * 24 * 60 * 60).to_i
+        if(difference <= time_between_records+1)
           if(difference != 0)
             sum += time_between_records
           end
