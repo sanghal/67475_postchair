@@ -5,9 +5,8 @@ class InputStream < ActiveRecord::Base
   #Validations
   #validates :user_id, presence: true, numericality: { only_integer: true }
   #The number 5 is arbitrary and pased on the amount of sensors our design currently implements (4)
-  #validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 5 }
-  #validates :input_time, presence: true
-  #validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
+  validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 5 }
+  validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
 
   #Scopes
   scope :last_month, -> { where("created_at > ? and created_at < ?", 30.days.ago, Time.now) }
@@ -31,32 +30,40 @@ class InputStream < ActiveRecord::Base
   BACK_POSITIONS.default = 'UK'
   
   COLOR = {
-    'SB' => 'green',
-    'UK' => 'yellow',
-    'CPR' => 'yellow',
-    'NSB' => 'yellow',
-    'SS' => 'yellow',
+    'SB' => 'orange',
+    'UK' => 'orange',
+    'CPR' => 'orange',
+    'NSB' => 'orange',
+    'SS' => 'orange',
     'GP' => 'green',
-    'NS' => 'green'
+    'NS' => 'grey'
+  }
+
+  POSITION_NAME = {
+    'SS' => 'Slouching Position',
+    'SB' => 'Sway Back',
+    'UK' => 'Light Weight Position',
+    'CPR' => 'Cradling a Phone Position',
+    'NSB' => 'Not Sitting Back',
+    'GP' => 'Good Posture',
+    'NS' => 'Not Sitting'
   }
 
   POSITION_IMPROVEMENTS = {
-    'SB' => ['Push your hips more inward','Strengthen up your back', 'Chin up'],
-    'UK' => ['Strengthen up your back', 'Moving only your head, drop your chin down and in toward your sternum while stretching the back of your neck'],
-    'CPR' => ['Strengthen up your back','Cradline a phone is bad', 'Have both feet touching the floor', 'Chin up'],
-    'NSB' => ['Push your hips inward toward chair','Hips align', 'Strengthen your back', 'Have both feet touching the floor'],
-    'SS' => ['Strengthen up your back', 'Try adjusting your body towards desk', 'put your feet in parallel position', 'Chin up'],
-    'GP' => ['Good Posture! Keep It Up!','Good Posture! Keep It Up!','Good Posture! Keep It Up!'],
+    'SB' => ['Too large of an inward curve in the lower back','You sitting too far back in the chair','Push your hips more inward','Strengthen up your back', 'Chin up'],
+    'UK' => ['Strengthen up your back', 'Moving only your head, drop your chin down and in toward your sternum while stretching the back of your neck', 'Have both feet touching the floor', 'Chin up','Bring more weight of your body down to the chair', 'Look straight'],
+    'CPR' => ['You might be carrying something heavy on one side of the body','Strengthen up your back','Do not keep your head too high or low', 'Have both feet touching the floor', 'Chin up'],
+    'SS' => ['Strengthen up your back', 'Moving only your head, drop your chin down and in toward your sternum while stretching the back of your neck', 'Have both feet touching the floor', 'Chin up','Bring more weight of your body down to the chair', 'Look straight'],
+    'NSB' => ['You are not sitting back in the chair','You are allowing your back to do all the work','Push your hips inward toward chair','Have your hips align', 'Strengthen your back', 'Have both feet touching the floor'],
+    'GP' => ['Good Posture! Keep It Up!'],
     'NS' => ['Currently not in chair']
   }
-  POSITION_IMPROVEMENTS.default = 'Your posture is so bad we seriously dont even know how to fix it'
 
   def self.get_message(hash_table)
     if(hash_table.nil? || hash_table.empty?)
       # This happens when the user has no input streams
       return POSITION_IMPROVEMENTS['NS']
     end
-    
     while (hash_table.max_by{|k,v| v}[0] == 'NS' || hash_table.max_by{|k,v| v}[0] == 'GP')
       if hash_table.length == 1
         break
@@ -253,5 +260,86 @@ class InputStream < ActiveRecord::Base
       return 2
     end
   end
+
+  def self.current_time_seated(user)
+  time_between_records = 3 #seconds
+  sensors = user.input_streams.by_time
+
+  index = 0
+  prev = nil
+  sum = 0
+  cur = sensors[index]
+  while !cur.nil? do
+    if(prev.nil?)
+      sum += time_between_records
+    else
+      difference = (((prev.created_at - cur.created_at) * 24 * 60 * 60).to_i)
+      if(difference <= time_between_records)
+        if(difference != 0)
+          sum += time_between_records
+        end
+      else
+        break
+      end #if
+    end #if
+    prev = cur
+    index = index + 1
+    cur = sensors[index]
+  end #while
+
+  ## now convert the sum into a string that also displays number of seconds
+  #check if it's in hours
+  seconds_in_minute = 60
+  seconds_in_hour = seconds_in_minute * 60
+  if (sum / seconds_in_hour) > 0
+    return "" + (sum / seconds_in_hour).to_s + " hours"
+  elsif sum / seconds_in_minute > 0
+    return "" + (sum / seconds_in_minute).to_s + " minutes"
+  else
+    return "" + sum.to_s + " seconds"
+  end
+end
+
+# Expects current_user.input_streams.recent.by_time
+def self.change_over_week(streams)
+  times_per_day = [0,0,0,0,0,0,0,0,0,0] # 10 spots because .recent returns last 10 days
+  prev_streams = []
+  prev_time = DateTime.now
+  streams.each do |s|
+    index = Date.today - s.created_at.to_date
+
+    #If this is the same as a previous stream, we want to find out if these streams are GP
+    if(s.created_at == prev_time)
+      prev_streams << s
+      #If they are good posture, increment the amount of good posture that day by 3
+      if InputStream.determine_posture(prev_streams) == "GP"
+        times_per_day[index] += 3
+      end
+    else
+      #if it was different, set up the next round
+      prev_time = s.created_at
+      prev_streams = [s]
+    end
+  end
+
+  #Now that we're here, we have the number of good postures per day and need to calculate increase
+  differences_per_day = 0.0
+  #want to operate from oldest day to newest, so flip array
+  times_per_day.reverse!
+  #we have ten items, so need to index 3 in to get to 7 days ago
+  prev_times = times_per_day[3]
+  #Need to exclude first four, so countdown
+  countdown = 4
+  times_per_day.each do |t|
+    if countdown > 0
+      countdown -= 1
+    else
+      differences_per_day += (t - prev_times) > 0 ? (t - prev_times) : 0
+      prev_times = t
+    end
+  end
+  differences_per_day = differences_per_day / 7.0
+  return (differences_per_day.to_i.to_f == differences_per_day ? differences_per_day.to_i : differences_per_day.round(2)).to_s + "%"
+end
 
 end
