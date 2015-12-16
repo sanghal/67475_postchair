@@ -5,6 +5,7 @@ nav ul {
 body.sessions.new{
 	background: url('/assets/postchair2.jpg') no-repeat;
 	background-size: 100% auto;
+  color: white;
 }
 .boxed {
   border-radius: 25px;
