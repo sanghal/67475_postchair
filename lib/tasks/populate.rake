@@ -58,6 +58,38 @@ namespace :db do
                         updated_at: input_time,
                         set_id: i)
    end
+
+  50.times do |i|
+     input_time = Faker::Time.between(DateTime.now - 30, DateTime.now)
+     FactoryGirl.create(:input_stream,
+                        user_id: Sangha.id,
+                        position: 1,
+                        measurement: 700
+                        created_at: input_time,
+                        updated_at: input_time,
+                        set_id: i)
+     FactoryGirl.create(:input_stream,
+                        user_id: Sangha.id,
+                        position: 2,
+                        measurement: 700
+                        created_at: input_time,
+                        updated_at: input_time,
+                        set_id: i)
+     FactoryGirl.create(:input_stream,
+                        user_id: Sangha.id,
+                        position: 3,
+                        measurement: 700
+                        created_at: input_time,
+                        updated_at: input_time,
+                        set_id: i)
+     FactoryGirl.create(:input_stream,
+                        user_id: Sangha.id,
+                        position: 4,
+                        measurement: 700
+                        created_at: input_time,
+                        updated_at: input_time,
+                        set_id: i)
+   end
    ActiveRecord::Base.record_timestamps = true  
  end
  end
