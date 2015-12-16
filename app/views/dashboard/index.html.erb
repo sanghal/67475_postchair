@@ -21,8 +21,8 @@
     <%= image_tag("#{@posture}.png", :style => "border:1px; width:300px; height:500px;")%>
   </div>
   <div class="col s3">
-    <div class="boxed", style = "background-color:<%= @color %>"> <h5> <%= @name %></h5></div> <br>
-    <div class="boxed",  style = "background-color: blue"> <h5> <%= InputStream.current_time_seated(current_user) %> </h5> Time sitted</div>
+    <div class="boxed", style = "background-color:<%= @color %>"> <h5> <%= @name %> <% @input_streams.first.created_at %></h5></div> <br>
+    <div class="boxed",  style = "background-color: blue"> <h5> <%= InputStream.current_time_seated(current_user) %> </h5> Time seated</div>
   </div>
   
 </div>
