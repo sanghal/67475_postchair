@@ -3,7 +3,7 @@ class HistoryController < ApplicationController
 
   # GET /input_streams
   # GET /input_streams.json
-   def index
+  def index
     if current_user.nil?
       redirect_to login_url
     end

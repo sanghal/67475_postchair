@@ -27,69 +27,71 @@ namespace :db do
    ActiveRecord::Base.record_timestamps = false
    
    positions = [1,2,3,4] 
-   50.times do |i|
-     input_time = Faker::Time.between(DateTime.now - 30, DateTime.now)
-     FactoryGirl.create(:input_stream,
-                        user_id: Sangha.id,
-                        position: 1,
-                        measurement: [0, 700].sample,
-                        created_at: input_time,
-                        updated_at: input_time,
-                        set_id: i)
-     FactoryGirl.create(:input_stream,
-                        user_id: Sangha.id,
-                        position: 2,
-                        measurement: [0, 700].sample,
-                        created_at: input_time,
-                        updated_at: input_time,
-                        set_id: i)
-     FactoryGirl.create(:input_stream,
-                        user_id: Sangha.id,
-                        position: 3,
-                        measurement: [0, 700].sample,
-                        created_at: input_time,
-                        updated_at: input_time,
-                        set_id: i)
-     FactoryGirl.create(:input_stream,
-                        user_id: Sangha.id,
-                        position: 4,
-                        measurement: [0, 700].sample,
-                        created_at: input_time,
-                        updated_at: input_time,
-                        set_id: i)
-   end
 
+#    50.times do |i|
+#      input_time = Faker::Time.between(DateTime.now - 30, DateTime.now)
+#      FactoryGirl.create(:input_stream,
+#                         user_id: Sangha.id,
+#                         position: 1,
+#                         measurement: [0, 700, ].sample,
+#                         created_at: input_time,
+#                         updated_at: input_time,
+#                         set_id: i)
+#      FactoryGirl.create(:input_stream,
+#                         user_id: Sangha.id,
+#                         position: 2,
+#                         measurement: [0, 700].sample,
+#                         created_at: input_time,
+#                         updated_at: input_time,
+#                         set_id: i)
+#      FactoryGirl.create(:input_stream,
+#                         user_id: Sangha.id,
+#                         position: 3,
+#                         measurement: [0, 700].sample,
+#                         created_at: input_time,
+#                         updated_at: input_time,
+#                         set_id: i)
+#      FactoryGirl.create(:input_stream,
+#                         user_id: Sangha.id,
+#                         position: 4,
+#                         measurement: [0, 700].sample,
+#                         created_at: input_time,
+#                         updated_at: input_time,
+#                         set_id: i)
+
+# end
   50.times do |i|
      input_time = Faker::Time.between(DateTime.now - 30, DateTime.now)
      FactoryGirl.create(:input_stream,
                         user_id: Sangha.id,
                         position: 1,
-                        measurement: 700
+                        measurement: 1502,
                         created_at: input_time,
                         updated_at: input_time,
                         set_id: i)
      FactoryGirl.create(:input_stream,
                         user_id: Sangha.id,
                         position: 2,
-                        measurement: 700
+                        measurement: 1502,
                         created_at: input_time,
                         updated_at: input_time,
                         set_id: i)
      FactoryGirl.create(:input_stream,
                         user_id: Sangha.id,
                         position: 3,
-                        measurement: 700
+                        measurement: 1502,
                         created_at: input_time,
                         updated_at: input_time,
                         set_id: i)
      FactoryGirl.create(:input_stream,
                         user_id: Sangha.id,
                         position: 4,
-                        measurement: 700
+                        measurement: 1502,
                         created_at: input_time,
                         updated_at: input_time,
                         set_id: i)
-   end
+
+end
    ActiveRecord::Base.record_timestamps = true  
  end
- end
+end
