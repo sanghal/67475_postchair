@@ -1,28 +1,28 @@
 <p id="notice"><%= notice %></p>
 
-    <div class="row">
-      <div class="col s4">
-      	<table class="bordered highlight" >
-  <thead>
-    <tr>
-      <th><h5>Sitting Recommendations</h5></th>
-    </tr>
-  </thead>
-  		<tbody>
-    		<% @messages.each do |message| %>
-      		<tr>
-        		<td><%= message %></td>
-      		</tr>
-    		<% end %>
-  		</tbody>
-		</table>
-      </div>
-      <div class="col s5">
-      <%= image_tag("#{@posture}.png", :style => "border:1px; width:300px; height:500px;")%>
-      </div>
-      <div class="col s3">
-      <div class="boxed", style = "background-color:<%= @color %>"> <h5> <%= @name %></h5></div> <br>
-      <div class="boxed",  style = "background-color: blue"> <h5> <%= InputStream.current_time_seated(current_user) %> </h5> Time sitted</div>
-      </div>
+<div class="row">
+  <div class="col s4">
+    <table class="bordered highlight" >
+      <thead>
+	<tr>
+	  <th><h5>Sitting Recommendations</h5></th>
+	</tr>
+      </thead>
+      <tbody>
+    	<% @messages.each do |message| %>
+      	<tr>
+          <td><%= message %></td>
+      	</tr>
+    	<% end %>
+      </tbody>
+    </table>
+  </div>
+  <div class="col s5">
+    <%= image_tag("#{@posture}.png", :style => "border:1px; width:300px; height:500px;")%>
+  </div>
+  <div class="col s3">
+    <div class="boxed", style = "background-color:<%= @color %>"> <h5> <%= @name %> <%= @input_streams.first.created_at %></h5></div> <br>
+    <div class="boxed",  style = "background-color: blue"> <h5> <%= InputStream.current_time_seated(current_user) %> </h5> Time sitted</div>
+  </div>
   
- </div>
+</div>

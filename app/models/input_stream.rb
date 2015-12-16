@@ -3,7 +3,7 @@ class InputStream < ActiveRecord::Base
   belongs_to :user
 
   #Validations
-  validates :user_id, presence: true, numericality: { only_integer: true }
+  #validates :user_id, presence: true, numericality: { only_integer: true }
   #The number 5 is arbitrary and pased on the amount of sensors our design currently implements (4)
   validates :position, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0, less_than: 5 }
   validates :measurement, presence: true, numericality: { only_integer: true, greater_than_or_equal_to: 0}
@@ -28,7 +28,7 @@ class InputStream < ActiveRecord::Base
     [[1,0],[2,0],[3,0],[4,0]] => 'NS'   # Not Sitting
   }
   BACK_POSITIONS.default = 'UK'
-
+  
   COLOR = {
     'SB' => 'orange',
     'UK' => 'orange',
@@ -59,24 +59,23 @@ class InputStream < ActiveRecord::Base
     'NS' => ['Currently not in chair']
   }
 
-def self.get_message(hash_table)
+  def self.get_message(hash_table)
     if(hash_table.nil? || hash_table.empty?)
       # This happens when the user has no input streams
       return POSITION_IMPROVEMENTS['NS']
     end
-   
-    while (hash_table.max_by{|k,v| v}[0] == 'NS' || hash_table.max_by{|k,v| v}[0] == 'GP')
-       if hash_table.length == 1
-   break
-       else
-         hash_table.delete(hash_table.max_by{|k,v| v})
-       end
-     end
-
+#    while (hash_table.max_by{|k,v| v}[0] == 'NS' || hash_table.max_by{|k,v| v}[0] == 'GP')
+ #     if hash_table.length == 1
+  #      break
+  #    else
+  #      hash_table.delete(hash_table.max_by{|k,v| v})
+  #    end
+  #  end
+    
     return POSITION_IMPROVEMENTS[hash_table.max_by{|k,v| v}[0]]
-   end
-
-
+  end
+  
+  
   #Returns an array of up to three of the most recent input_streams
   def self.find_last_posture_sensors(user)
     position_ids = [1,2,3,4]
@@ -85,21 +84,21 @@ def self.get_message(hash_table)
     if sensor_input.length < 4
       return nil
     end
-
+    
     sensors = Array.new
     sensor_input.each do |i|
       unless position_ids.find_index(i.position).nil?
         position_ids.delete(i.position)
         sensors.push(i)
       end
-
+      
       if sensors.length > 3
         break
       end
     end
     return sensors
   end
-
+  
   # determine_posture takes in an array of input_streams and returns the posture
   # that they map to.
   def self.determine_posture(sensors)
@@ -107,7 +106,7 @@ def self.get_message(hash_table)
     to_return = 'UK' #Our default value, in case the sensors don't match up
 
     #Only perform a check when the number of sensors passed to us is correct
-    if (sensors.length == total_number_of_sensors)
+    if(sensors.length == total_number_of_sensors)
       posturePreHash = Array.new
       #Convert the input_streams into our hash format
       sensors.each do |s|
@@ -129,14 +128,14 @@ def self.get_message(hash_table)
     return results
   end
 
-   def self.determine_postures(sensor_array)
+  def self.determine_postures(sensor_array)
     postures = Hash.new 
     sensor_array.each do|s|
       postures[s[0].created_at] = InputStream.determine_posture(s)
     end
     return postures
   end
-
+  
   def self.determine_postures_time(sensor_array)
     postures = Hash.new(Array.new()) 
     sensor_array.each do|s|
@@ -165,6 +164,87 @@ def self.get_message(hash_table)
     return  InputStream.iterative_posture(sensors, postures)
   end
 
+  def self.current_time_seated(user)
+    time_between_records = 3 #seconds
+    sensors = user.input_streams.by_time
+
+    index = 0
+    prev = nil
+    sum = 0
+    cur = sensors[index]
+    while !cur.nil? do
+      if(prev.nil?)
+        sum += time_between_records
+      else
+        difference = ((prev.created_at - cur.created_at) * 24 * 60 * 60).to_i
+        if(difference <= time_between_records+1)
+          if(difference != 0)
+            sum += time_between_records
+          end
+        else
+          break
+        end #if
+      end #if
+      prev = cur
+      index = index + 1
+      cur = sensors[index]
+    end #while
+
+    ## now convert the sum into a string that also displays number of seconds
+    #check if it's in hours
+    seconds_in_minute = 60
+    seconds_in_hour = seconds_in_minute * 60
+    if (sum / seconds_in_hour) > 0
+      return "" + (sum / seconds_in_hour).to_s + " hours"
+    elsif sum / seconds_in_minute > 0
+      return "" + (sum / seconds_in_minute).to_s + " minutes"
+    else
+      return "" + sum.to_s + " seconds"
+    end
+  end
+
+  # Expects current_user.input_streams.recent.by_time
+  def self.change_over_week(streams)
+    times_per_day = [0,0,0,0,0,0,0,0,0,0] # 10 spots because .recent returns last 10 days
+    prev_streams = []
+    prev_time = DateTime.now
+    streams.each do |s|
+      index = Date.today - s.created_at.to_date
+
+      #If this is the same as a previous stream, we want to find out if these streams are GP
+      if(s.created_at == prev_time)
+        prev_streams << s
+        #If they are good posture, increment the amount of good posture that day by 3
+        if InputStream.determine_posture(prev_streams) == "GP"
+          times_per_day[index] += 3
+        end
+      else
+        #if it was different, set up the next round
+        prev_time = s.created_at
+        prev_streams = [s]
+      end
+    end
+
+    #Now that we're here, we have the number of good postures per day and need to calculate increase
+    differences_per_day = 0.0
+    #want to operate from oldest day to newest, so flip array
+    times_per_day.reverse!
+    #we have ten items, so need to index 3 in to get to 7 days ago
+    prev_times = times_per_day[3]
+    #Need to exclude first four, so countdown
+    countdown = 4
+    times_per_day.each do |t|
+      if countdown > 0
+        countdown -= 1
+      else
+        differences_per_day += (t - prev_times) > 0 ? (t - prev_times) : 0
+        prev_times = t
+      end
+    end
+    differences_per_day = differences_per_day / 7.0
+    return (differences_per_day.to_i.to_f == differences_per_day ? differences_per_day.to_i : differences_per_day.round(2)).to_s + "%"
+  end
+  
   private
   
   def validate_user_id
@@ -172,15 +252,14 @@ def self.get_message(hash_table)
   end
   
   def self.pressurize(pValue)
-    if (pValue == 0)
+    if (pValue < 30)
       return 0
-    elsif (pValue < 451)
+    elsif (pValue < 1501)
       return 1
     else 
       return 2
     end
   end
-
 
   def self.current_time_seated(user)
   time_between_records = 3 #seconds
